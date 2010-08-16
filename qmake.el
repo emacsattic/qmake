@@ -438,16 +438,22 @@
       ;;Need to check wheter car returns nil
       (setq first-error (car (qmake-compile-search-for-errors)))
       (if first-error
-          ((goto-char first-error)
+          (progn
+           (goto-char first-error)
            (setq line-number-list (qmake-compile-get-line-nr-from-error))
            (switch-to-buffer-other-window cur-buffer)
            (goto-line (car line-number-list))
            )
-;        (message "Compiled successfully")
-        )
+        (progn
+          (delete-windows-on "*Shell Command Output*")
+          (message "Compiled successfully")
+          )
+        
       )
     )
   )
+)
+  
 
 
 
