@@ -419,7 +419,7 @@
   '("compile" . qmake-compile))
 
 
-(concat qmake-command-str " " "FISK")
+
 ;; code to remove the whole menu panel
 ;;(global-unset-key [menu-bar qmake-menu])
 (defun qmake-compile()
@@ -429,19 +429,25 @@
         (file-name (buffer-file-name))
         (cur-buffer (buffer-name))
         (line-number-list ())
+        (first-error nil)
         )
     (progn 
       (shell-command (concat qmake-command-str " " file-name))
       (switch-to-buffer-other-window "*Shell Command Output*")
       (qmake-highlight-error)
-      (goto-char (car (qmake-compile-search-for-errors)))
-      (setq line-number-list (qmake-compile-get-line-nr-from-error))
-      (switch-to-buffer-other-window cur-buffer)
-      (goto-line (car line-number-list))
+      ;;Need to check wheter car returns nil
+      (setq first-error (car (qmake-compile-search-for-errors)))
+      (if first-error
+          ((goto-char first-error)
+           (setq line-number-list (qmake-compile-get-line-nr-from-error))
+           (switch-to-buffer-other-window cur-buffer)
+           (goto-line (car line-number-list))
+           )
+;        (message "Compiled successfully")
+        )
       )
     )
   )
-
 
 
 
